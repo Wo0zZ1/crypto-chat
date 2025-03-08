@@ -1,18 +1,16 @@
 import { FormEvent, useState } from 'react'
 
 interface IRegisterName {
-	userName: string
-	setUserName: React.Dispatch<React.SetStateAction<string>>
+	submitUserName: (name: string) => void
 }
 
-const RegisterName = ({ userName, setUserName }: IRegisterName) => {
+const RegisterName = ({ submitUserName }: IRegisterName) => {
 	const [nameValue, setNameValue] = useState<string>('')
 
 	const submitHandler = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		if (!nameValue.length) return
-		console.log(userName)
-		setUserName(nameValue)
+		submitUserName(nameValue)
 		setNameValue('')
 	}
 

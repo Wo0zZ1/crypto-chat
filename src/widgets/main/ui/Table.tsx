@@ -10,10 +10,22 @@ const Table = () => {
 	const queryClient = useQueryClient()
 
 	const { data, isError, isLoading, error } = useQuery<IFetchData[]>({
-		queryKey: ['coins', fetchProps],
+		queryKey: [
+			'coins',
+			fetchProps.currency,
+			fetchProps.page,
+			fetchProps.perPage,
+			fetchProps.filter,
+		],
 		queryFn: () => fetchCoins(fetchProps),
 		retry: 0,
 	})
+
+	const filteredData = data?.filter(data =>
+		data.name
+			.toLowerCase()
+			.includes(fetchProps.search?.toLowerCase() ?? ''),
+	)
 
 	const updateData = useCallback(() => {
 		queryClient.invalidateQueries({ queryKey: ['coins'] })
@@ -23,7 +35,9 @@ const Table = () => {
 		<div className='overflow-x-auto my-4'>
 			<table className='table-fixed min-w-[1440px] text-center'>
 				<TableHead />
-				{!isLoading && data && <TableBody data={data} />}
+				{!isLoading && filteredData && (
+					<TableBody data={filteredData} />
+				)}
 			</table>
 			{isError && (
 				<div className='w-full py-8 flex flex-col items-center justify-center gap-4'>
@@ -42,7 +56,7 @@ const Table = () => {
 					<span className='text-3xl font-bold'>Загрузка...</span>
 				</div>
 			)}
-			{!isError && !isLoading && !data && (
+			{!isError && !isLoading && !filteredData && (
 				<div className='w-full py-8 flex flex-col items-center justify-center gap-4'>
 					<span className='text-3xl font-bold'>Нет данных...</span>
 					<button

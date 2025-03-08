@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import { FetchContext } from '../../../providers'
-import { IFetchData } from '../../shared/api/fetchCoins'
+import { IFetchData } from '../../../shared/api'
 import {
 	getCurrencyFormatter,
 	getPercentageFormatter,
@@ -26,7 +26,19 @@ const TableBody = ({ data }: ITableBodyProps) => {
 					<td className='p-5'>
 						{fetchProps.perPage * (fetchProps.page - 1) + index + 1}
 					</td>
-					<td className='p-5'>{data.name}</td>
+					<td className='p-5'>
+						<div className='font-bold text-md flex items-center gap-2'>
+							<img
+								className='w-[28px] h-[28px]'
+								src={data.image}
+								alt='coin icon'
+							/>
+							<span>{data.name}</span>
+							<span className='font-bold opacity-40'>
+								{data.symbol.toUpperCase()}
+							</span>
+						</div>
+					</td>
 					<td className='p-5'>
 						{currencyformatter.format(data.total_volume)}
 					</td>
@@ -36,12 +48,26 @@ const TableBody = ({ data }: ITableBodyProps) => {
 					<td className='p-5'>
 						{currencyformatter.format(data.current_price)}
 					</td>
-					<td className='p-5'>
+					<td
+						style={{
+							color:
+								data.market_cap_change_percentage_24h >= 0
+									? 'green'
+									: 'red',
+						}}
+						className='p-5'>
 						{percentageformatter.format(
 							data.market_cap_change_percentage_24h / 100,
 						)}
 					</td>
-					<td className='p-5'>
+					<td
+						style={{
+							color:
+								data.price_change_percentage_24h >= 0
+									? 'green'
+									: 'red',
+						}}
+						className='p-5'>
 						{percentageformatter.format(
 							data.price_change_percentage_24h / 100,
 						)}

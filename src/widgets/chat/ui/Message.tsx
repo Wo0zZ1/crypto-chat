@@ -5,7 +5,7 @@ export interface IMessageProps {
 export interface IMessage {
 	type: 'message'
 	text: string
-	userName: string
+	username: string
 	timestamp: string
 }
 
@@ -21,11 +21,14 @@ const Message = ({ message }: IMessageProps) => {
 	return (
 		<div className='text-sm mb-5'>
 			<p className='text-white/70'>
-				<i>{message.timestamp} </i>
+				<i>
+					{new Date(message.timestamp).toLocaleTimeString('ru-RU')}
+				</i>
+				&nbsp;
 				<i>
 					{message.type === 'system'
 						? `Системное сообщение:`
-						: `От ${message.userName}:`}
+						: `От ${message.username}:`}
 				</i>
 			</p>
 			<p className='font-medium'>{message.text}</p>

@@ -9,59 +9,6 @@ import { useLocalStorage } from '../../hooks'
 import style from './index.module.css'
 import { AsideContext } from '../../providers'
 
-const mockMessages: IChatMessage[] = [
-	{
-		type: 'system',
-		text: 'Wo0zZ1 присоединился к чату!',
-		timestamp: '04.03.2025',
-	},
-	{
-		type: 'message',
-		text: 'Привет, друзья!',
-		timestamp: '04.03.2025',
-		userName: 'Wo0zZ1',
-	},
-	{
-		type: 'system',
-		text: 'Влад присоединился к чату!',
-		timestamp: '04.03.2025',
-	},
-	{
-		type: 'message',
-		text: 'Привет, Wo0zZ1!',
-		timestamp: '04.03.2025',
-		userName: 'Влад',
-	},
-	{
-		type: 'message',
-		text: 'Привет, Wo0zZ1!',
-		timestamp: '04.03.2025',
-		userName: 'Влад',
-	},
-	{
-		type: 'message',
-		text: 'Привет, Wo0zZ1!',
-		timestamp: '04.03.2025',
-		userName: 'Влад',
-	},
-	{
-		type: 'message',
-		text: 'Привет, Wo0zZ1!',
-		timestamp: '04.03.2025',
-		userName: 'Влад',
-	},
-	{
-		type: 'system',
-		text: 'Wo0zZ1 покинул чат!',
-		timestamp: '05.03.2025',
-	},
-	{
-		type: 'system',
-		text: 'Влад покинул чат!',
-		timestamp: '05.03.2025',
-	},
-]
-
 const Chat = () => {
 	const { active, setActive } = useContext(AsideContext)
 
@@ -71,55 +18,69 @@ const Chat = () => {
 	)
 
 	const [socket, setSocket] = useState<Socket | null>(null)
-	const [messages, setMessages] =
-		useState<IChatMessage[]>(mockMessages)
+	const [messages, setMessages] = useLocalStorage<IChatMessage[]>(
+		'messagesData',
+		[],
+	)
 
-	// useEffect(() => {
-	// 	const newSocket = io('ws://89.169.168.253:4500')
+	useEffect(() => {
+		const newSocket = io('ws://89.169.168.253:4500', {
+			transports: ['websocket', 'polling'],
+		})
 
-	// 	newSocket.on('connect', () => {
-	// 		console.log('Соединение установлено')
-	// 		setSocket(newSocket)
-	// 	})
+		newSocket.on('connect', () => {
+			console.log('Соединение установлено')
+			setSocket(newSocket)
+			if (userName)
+				newSocket.emit('set_username', { username: userName })
+		})
 
-	// 	newSocket.on('message', (msg: IMessage) => {
-	// 		const newMsg: IChatMessage = {
-	// 			...msg,
-	// 			type: 'message',
-	// 		}
-	// 		setMessages(prev => [...prev, newMsg])
-	// 	})
+		newSocket.on('message', (msg: IMessage) => {
+			const newMsg: IChatMessage = {
+				...msg,
+				type: 'message',
+			}
+			setMessages(prev => [...prev, newMsg])
+		})
 
-	// 	newSocket.on('system', (msg: ISystemMessage) => {
-	// 		const newMsg: IChatMessage = {
-	// 			...msg,
-	// 			type: 'system',
-	// 		}
-	// 		setMessages(prev => [...prev, newMsg])
-	// 	})
+		newSocket.on('system', (msg: ISystemMessage) => {
+			const newMsg: IChatMessage = {
+				...msg,
+				type: 'system',
+			}
+			setMessages(prev => [...prev, newMsg])
+		})
 
-	// 	newSocket.on('disconnect', () => {
-	// 		console.log('Соединение разорвано')
-	// 		setSocket(null)
-	// 	})
+		newSocket.on('disconnect', () => {
+			console.log('Соединение разорвано')
+			setSocket(null)
+		})
 
-	// 	return () => {
-	// 		newSocket.disconnect()
-	// 	}
-	// }, [])
+		return () => {
+			newSocket.disconnect()
+		}
+	}, [])
 
-	const submitHandler = useCallback(
-		(msg: string) => {
+	const submitMessage = useCallback(
+		(message: string) => {
 			if (!socket || !socket.connected) return
-			console.log(msg)
+			socket.emit('message', { text: message })
 		},
 		[socket],
+	)
+
+	const submitUserName = useCallback(
+		(name: string) => {
+			if (!socket || !socket.connected) return
+			setUserName(name)
+			socket.emit('set_username', { username: name })
+		},
+		[socket, setUserName],
 	)
 
 	return (
 		<>
 			<div
-				onClick={() => setActive(false)}
 				id={style.SidebarBack}
 				className={active ? style.activeBack : ''}
 			/>
@@ -132,7 +93,11 @@ const Chat = () => {
 					className='relative flex flex-col justify-between py-4 px-8 bg-linear-to-b from-[#343a40] to-[#2e3361]'>
 					<button
 						onClick={() => setActive(prev => !prev)}
-						className='absolute top-[50px] left-0 -translate-x-1/2 rounded-full bg-btn hover:bg-btn-hover p-2 w-[48px] h-[48px] cursor-pointer'>
+						style={{
+							rotate: active ? '180deg' : '0deg',
+						}}
+						id={style.CloseButton}
+						className='absolute text-2xl font-bold top-[50px] left-0 -translate-x-1/2 rounded-full bg-btn hover:bg-btn-hover p-2 w-[48px] h-[48px] cursor-pointer'>
 						{'<'}
 					</button>
 					<div className='flex flex-col overflow-auto'>
@@ -143,12 +108,9 @@ const Chat = () => {
 						<Messages messages={messages} />
 					</div>
 					{userName ? (
-						<SendMessage submitHandler={submitHandler} />
+						<SendMessage submitMessage={submitMessage} />
 					) : (
-						<RegisterName
-							userName={userName}
-							setUserName={setUserName}
-						/>
+						<RegisterName submitUserName={submitUserName} />
 					)}
 				</div>
 			</aside>

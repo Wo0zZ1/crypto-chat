@@ -1,4 +1,4 @@
-import { TCurrency } from '../../shared/api/fetchCoins'
+import { TCurrency } from '../../../shared/api'
 
 export const currencies: TCurrency[] = ['usd', 'eur', 'rub']
 

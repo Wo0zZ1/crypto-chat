@@ -3,17 +3,17 @@ import { FormEvent, useState } from 'react'
 import sendIcon from '../assets/icons8-send-48.png'
 
 interface ISendMessageProps {
-	submitHandler: (msg: string) => void
+	submitMessage: (message: string) => void
 }
 
-const SendMessage = ({ submitHandler }: ISendMessageProps) => {
+const SendMessage = ({ submitMessage }: ISendMessageProps) => {
 	const [messageText, setMessageText] = useState<string>('')
 
 	const formHandler = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		if (!messageText.trim().length) return
+		submitMessage(messageText)
 		setMessageText('')
-		submitHandler(messageText) // Callback
 	}
 
 	return (

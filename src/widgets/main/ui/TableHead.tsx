@@ -34,13 +34,14 @@ const TableHead = () => {
 	const getSaturate = useCallback(
 		(param: string, arrow: 'up' | 'down') => {
 			const filterName = paramToFilter(param)
-			if (!filterName) return 0
+			if (!filterName || filterName !== fetchProps.filter.name)
+				return 0
 			return fetchProps.filter.direction ===
 				(arrow === 'down' ? 'desc' : 'asc')
 				? 100
 				: 0
 		},
-		[fetchProps.filter.direction],
+		[fetchProps.filter],
 	)
 
 	return (
