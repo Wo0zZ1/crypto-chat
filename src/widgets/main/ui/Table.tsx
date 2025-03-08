@@ -21,7 +21,7 @@ const Table = () => {
 
 	return (
 		<div className='overflow-x-auto my-4'>
-			<table className='table-fixed text-center'>
+			<table className='table-fixed min-w-[1440px] text-center'>
 				<TableHead />
 				{!isLoading && data && <TableBody data={data} />}
 			</table>

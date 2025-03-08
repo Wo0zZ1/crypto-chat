@@ -40,7 +40,7 @@ const TableHead = () => {
 				? 100
 				: 0
 		},
-		[],
+		[fetchProps.filter.direction],
 	)
 
 	return (
@@ -50,8 +50,8 @@ const TableHead = () => {
 					<th
 						key={index}
 						onClick={() => paramHandler(param)}
-						className=' hover:bg-[#14151a] cursor-pointer p-5'>
-						<div className='w-max flex gap-4 items-center justify-center'>
+						className='hover:bg-[#14151a] cursor-pointer p-5'>
+						<div className='mx-auto w-max flex gap-4 items-center justify-center'>
 							<p>{param}</p>
 							<div
 								style={{

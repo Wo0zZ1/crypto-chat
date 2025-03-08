@@ -12,7 +12,7 @@ const Header = () => {
 	})
 
 	return (
-		<header className='sticky flex top-0 bg-header h-[55px] border-b border-[#16171c]'>
+		<header className='z-100 sticky flex top-0 bg-header h-[55px] border-b border-[#16171c]'>
 			{!isLoading && (
 				<RunningLine isError={isError} lineElements={data} />
 			)}

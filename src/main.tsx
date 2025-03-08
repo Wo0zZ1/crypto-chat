@@ -9,13 +9,16 @@ import './index.css'
 import { FetchProvider } from './providers/FetchProvider.tsx'
 
 import App from './App.tsx'
+import { AsideProvider } from './providers/AsideProvider.tsx'
 
 const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
 	<QueryClientProvider client={queryClient}>
-		<FetchProvider>
-			<App />
-		</FetchProvider>
+		<AsideProvider>
+			<FetchProvider>
+				<App />
+			</FetchProvider>
+		</AsideProvider>
 	</QueryClientProvider>,
 )

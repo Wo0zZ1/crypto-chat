@@ -1,0 +1,33 @@
+.root {
+	position: fixed;
+	top: 55px;
+	right: 0;
+	height: calc(100svh - 55px);
+	transform: translateX(90%);
+	transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.activeAside {
+	transform: translateX(0);
+}
+
+#SidebarContent {
+	height: 100%;
+	width: 100%;
+}
+
+#SidebarBack {
+	flex-basis: 32px;
+	flex-shrink: 0;
+	transition: flex-basis 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.activeBack {
+	flex-basis: 320px !important;
+}
+
+@media (width <= 800px) {
+	#SidebarBack {
+		flex-basis: 32px !important;
+	}
+}

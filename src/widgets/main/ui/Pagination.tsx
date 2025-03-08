@@ -6,6 +6,8 @@ const MOCKCOUNTOFCOINS = 17178
 const Pagination = () => {
 	const { fetchProps, setFetchProps } = useContext(FetchContext)
 
+	const [pageValue, setPageValue] = useState<number | null>(null)
+
 	const countOfPages = Math.ceil(
 		MOCKCOUNTOFCOINS / fetchProps.perPage,
 	)
@@ -23,23 +25,54 @@ const Pagination = () => {
 	return (
 		<div className='w-full my-4'>
 			<div className='flex flex-col gap-4'>
-				<label className='flex items-center gap-4 ml-auto'>
-					Количество токенов на странице
-					<select
-						onChange={e =>
-							setFetchProps(prev => ({
-								...prev,
-								perPage: +e.target.value,
-							}))
-						}
-						className='outline-none p-1 border border-[#1e1f26] rounded-md flex gap-4'
-						value={fetchProps.perPage}>
-						<option className='text-bg uppercase'>5</option>
-						<option className='text-bg uppercase'>10</option>
-						<option className='text-bg uppercase'>15</option>
-						<option className='text-bg uppercase'>25</option>
-					</select>
-				</label>
+				<div className='flex flex-wrap items-center justify-between gap-4'>
+					<label className='flex flex-wrap items-center gap-2'>
+						Перейти к странице:
+						<input
+							type='number'
+							min={1}
+							max={MOCKCOUNTOFCOINS}
+							className='py-2 px-2 outline-none border-2 border-[#1e1f26]'
+							placeholder='1'
+							onChange={e =>
+								setPageValue(
+									e.target.value === '' ? null : +e.target.value,
+								)
+							}
+							value={pageValue ?? ''}
+						/>
+						<button
+							disabled={!pageValue}
+							className='bg-btn disabled:bg-btn/70 not-disabled:hover:bg-btn-hover font-bold transition-colors py-1.5 px-3 shadow-slate-800/60 rounded-md not-disabled:cursor-pointer'
+							onClick={() => {
+								setFetchProps(prev => ({ ...prev, page: pageValue! }))
+							}}>
+							Перейти
+						</button>
+					</label>
+
+					<label className='flex items-center gap-2'>
+						Количество токенов на странице
+						<select
+							onChange={e =>
+								setFetchProps(prev => ({
+									...prev,
+									perPage: +e.target.value,
+									page: Math.ceil(
+										((prev.page - 1) * prev.perPage + 1) /
+											+e.target.value,
+									),
+								}))
+							}
+							className='outline-none p-1 border border-[#1e1f26] rounded-md flex gap-4'
+							value={fetchProps.perPage}>
+							<option className='text-bg uppercase'>5</option>
+							<option className='text-bg uppercase'>10</option>
+							<option className='text-bg uppercase'>15</option>
+							<option className='text-bg uppercase'>25</option>
+						</select>
+					</label>
+				</div>
 				<div className='flex items-center gap-3 mx-auto'>
 					<button
 						onClick={() => setPage(fetchProps.page - 1)}

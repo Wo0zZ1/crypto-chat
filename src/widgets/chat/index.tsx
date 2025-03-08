@@ -1,10 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 
 import type { IChatMessage, IMessage, ISystemMessage } from './ui'
 import { Messages, RegisterName, SendMessage } from './ui'
 
 import { useLocalStorage } from '../../hooks'
+
+import style from './index.module.css'
+import { AsideContext } from '../../providers'
 
 const mockMessages: IChatMessage[] = [
 	{
@@ -60,6 +63,8 @@ const mockMessages: IChatMessage[] = [
 ]
 
 const Chat = () => {
+	const { active, setActive } = useContext(AsideContext)
+
 	const [userName, setUserName] = useLocalStorage<string>(
 		'userName',
 		'',
@@ -112,22 +117,42 @@ const Chat = () => {
 	)
 
 	return (
-		<div
-			style={{ height: 'calc(100svh - 55px)' }}
-			className='sticky top-[55px] flex flex-col justify-between py-4 px-8 bg-linear-to-b from-[#343a40] to-[#2e3361]'>
-			<div className='flex flex-col overflow-auto'>
-				<p className='text-md font-bold text-center uppercase'>
-					Общий чат криптанов
-				</p>
-				<hr className='my-4' />
-				<Messages messages={messages} />
-			</div>
-			{userName ? (
-				<SendMessage submitHandler={submitHandler} />
-			) : (
-				<RegisterName userName={userName} setUserName={setUserName} />
-			)}
-		</div>
+		<>
+			<div
+				onClick={() => setActive(false)}
+				id={style.SidebarBack}
+				className={active ? style.activeBack : ''}
+			/>
+			<aside
+				className={`w-[320px] ${style.root} ${
+					active ? style.activeAside : ''
+				}`}>
+				<div
+					id={style.SidebarContent}
+					className='relative flex flex-col justify-between py-4 px-8 bg-linear-to-b from-[#343a40] to-[#2e3361]'>
+					<button
+						onClick={() => setActive(prev => !prev)}
+						className='absolute top-[50px] left-0 -translate-x-1/2 rounded-full bg-btn hover:bg-btn-hover p-2 w-[48px] h-[48px] cursor-pointer'>
+						{'<'}
+					</button>
+					<div className='flex flex-col overflow-auto'>
+						<p className='text-md font-bold text-center uppercase'>
+							Общий чат криптанов
+						</p>
+						<hr className='my-4' />
+						<Messages messages={messages} />
+					</div>
+					{userName ? (
+						<SendMessage submitHandler={submitHandler} />
+					) : (
+						<RegisterName
+							userName={userName}
+							setUserName={setUserName}
+						/>
+					)}
+				</div>
+			</aside>
+		</>
 	)
 }
 export default Chat
