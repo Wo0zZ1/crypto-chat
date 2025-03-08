@@ -1,8 +1,4 @@
-export {
-	fetchBaseCoins,
-	fetchCoins,
-	fetchCoinsByName,
-} from './fetchCoins'
+export { fetchBaseCoins, fetchCoins } from './fetchCoins'
 export type {
 	IFetchCoinsParams as IFetchCoins,
 	IFetchData,

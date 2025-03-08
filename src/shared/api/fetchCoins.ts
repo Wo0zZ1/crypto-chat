@@ -58,17 +58,3 @@ export async function fetchBaseCoins(
 
 	return data
 }
-
-export async function fetchCoinsByName({
-	currency,
-	filter,
-	page,
-	perPage,
-}: IFetchCoinsParams): Promise<IFetchData[]> {
-	// TODO IMPLEMENT THIS METHOD
-	const { data } = await axios.get(
-		`https://api.coingecko.com/api/v3/search?query=${currency}`,
-	)
-
-	return data
-}

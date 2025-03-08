@@ -1,4 +1,4 @@
-import { TFilterName } from '../components/shared/api/fetchCoins'
+import { TFilterName } from '../shared/api'
 
 export const paramToFilter = (param: string): TFilterName | null => {
 	switch (param) {
