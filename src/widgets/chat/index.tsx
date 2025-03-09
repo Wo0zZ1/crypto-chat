@@ -24,7 +24,7 @@ const Chat = () => {
 	)
 
 	useEffect(() => {
-		const newSocket = io('ws://89.169.168.253:4500', {
+		const newSocket = io('wss://potato.ipv6b.my.id:2096', {
 			transports: ['websocket', 'polling'],
 		})
 
